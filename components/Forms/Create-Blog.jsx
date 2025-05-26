@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function CreateBlog() {
   const router = useRouter();
@@ -38,6 +39,13 @@ export default function CreateBlog() {
 
         const data = await response.json();
         console.log("Post created:", data);
+        Swal.fire({
+          title: "Post created!",
+          text: "Your post has been created successfully!",
+          timer: 1500,
+          icon: "success",
+        });
+
         router.push("/Posts");
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -62,6 +70,7 @@ export default function CreateBlog() {
             type="text"
             value={formData.title}
             onChange={handleChange}
+            required
           />
           <textarea
             name="content"
@@ -70,6 +79,7 @@ export default function CreateBlog() {
             placeholder="Describe everything about this post here"
             value={formData.content}
             onChange={handleChange}
+            required
           ></textarea>
 
           <div className="icons flex text-gray-500 m-2">
@@ -130,7 +140,10 @@ export default function CreateBlog() {
             <div className="btn border border-gray-300 p-1 px-4 font-semibold cursor-pointer text-gray-500 ml-auto">
               Cancel
             </div>
-            <button type="submit" className="btn border border-indigo-500 p-1 px-4 font-semibold cursor-pointer text-gray-200 ml-2 bg-indigo-500">
+            <button
+              type="submit"
+              className="btn border border-indigo-500 p-1 px-4 font-semibold cursor-pointer text-gray-200 ml-2 bg-indigo-500"
+            >
               Post
             </button>
           </div>

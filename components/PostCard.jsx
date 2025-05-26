@@ -1,14 +1,46 @@
 "use client";
 import { useState } from "react";
 
-export default function PostCard({ title, content, likes, initialComments = [] }) {
+export default function PostCard({
+  title,
+  content,
+  likes,
+  initialComments = [],
+}) {
   const [comments, setComments] = useState(initialComments);
-  const [newComment, setNewComment] = useState("");
+  const [newComment, setNewComment] = useState({
+    user_id: 2, // puedes obtenerlo de tu auth
+    post_id: 4, // asegúrate que `id` esté disponible
+    content: "",
+  });
 
-  const handleAddComment = () => {
-    if (!newComment.trim()) return;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!newComment.content.trim()) return;
     setComments([...comments, newComment]);
-    setNewComment("");
+    console.log(newComment);
+
+    // CORRECTO: función async autoejecutable
+    (async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/comments`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(newComment),
+        });
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error("Error al enviar comentario:", error);
+      }
+    })();
+
+    setNewComment((prev) => ({ ...prev, content: "" }));
+    console.log("enviando comentario");
   };
 
   return (
@@ -21,35 +53,39 @@ export default function PostCard({ title, content, likes, initialComments = [] }
       {/* Comentarios */}
       <div>
         <h3 className="font-semibold text-lg mb-2">Comentarios</h3>
-        {comments.length === 0 ? (
-          <p className="text-gray-400">No hay comentarios aún.</p>
-        ) : (
-          <ul className="space-y-2">
-            {comments.map((c, i) => (
-              <li key={i} className="bg-gray-100 p-2 rounded">
-                {c}
-              </li>
-            ))}
-          </ul>
-        )}
+        <ul className="space-y-2">
+          {comments.map((c, i) => (
+            <li key={i} className="bg-gray-100 p-3 rounded">
+              <p className="text-sm text-gray-800 font-semibold">{c.user_id}</p>
+              <p className="text-sm text-gray-700">{c.content}</p>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Nuevo comentario */}
-      <div className="mt-4">
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Escribe tu comentario..."
-          className="w-full border border-gray-300 rounded p-2 resize-none"
-          rows={3}
-        />
-        <button
-          onClick={handleAddComment}
-          className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Comentar
-        </button>
-      </div>
+      <form onSubmit={handleSubmit}>
+        <div className="mt-4">
+          <textarea
+            value={newComment.content}
+            onChange={(e) =>
+              setNewComment((prev) => ({
+                ...prev,
+                content: e.target.value,
+              }))
+            }
+            placeholder="Escribe tu comentario..."
+            className="w-full border border-gray-300 rounded p-2 resize-none"
+            rows={3}
+          />
+          <button
+            type="submit"
+            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Comentar
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
