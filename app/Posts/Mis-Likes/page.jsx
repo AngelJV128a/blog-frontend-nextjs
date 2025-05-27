@@ -13,7 +13,7 @@ export default function MisPosts() {
       const user_id = 2; // puedes obtenerlo de tu auth
       try {
         const response = await fetch(
-          `http://localhost:8000/api/posts/user/${user_id}`,
+          `http://localhost:8000/api/posts/likes/${user_id}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export default function MisPosts() {
   return (
     <>
       <div className="px-4">
-        <h1 className="text-2xl font-bold mb-6 text-center">My Posts</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">My Likes</h1>
 
         {posts === undefined ? (
           <p className="text-center text-gray-500">Cargando...</p>
@@ -50,8 +50,8 @@ export default function MisPosts() {
             {posts.map((post) => (
               <Card
                 key={post.id}
-                title={post.title}
-                user={post.user.name}
+                title={post.post.title}
+                user={post.post.user_id}
                 id={post.id}
               />
             ))}

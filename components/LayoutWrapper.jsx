@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname();
-  const hideLayout = pathname === '/login' || pathname === '/sign-in';
+  const hideLayout = pathname === '/Login' || pathname === '/Sign-Up';
 
   return (
     <>

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Router from "next/router";
+import Link from "next/link";
 
 export default function Login() {
   const router = useRouter();
@@ -40,8 +41,8 @@ export default function Login() {
 
         const data = await response.json();
         console.log("Access token:", data.access_token);
-        localStorage.setItem('token', data.access_token);
-        router.push('/Posts');
+        localStorage.setItem("token", data.access_token);
+        router.push("/Posts");
       } catch (error) {
         // Aquí capturas cualquier error de red o del fetch
         console.error("Error en fetch:", error.message);
@@ -64,36 +65,10 @@ export default function Login() {
                   Sign in with
                 </h6>
               </div>
-              <div className="btn-wrapper text-center">
-                <button
-                  className="bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-2 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150"
-                  type="button"
-                >
-                  <img
-                    alt="..."
-                    className="w-5 mr-1"
-                    src="https://demos.creative-tim.com/notus-js/assets/img/github.svg"
-                  />
-                  Github
-                </button>
-                <button
-                  className="bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-1 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150"
-                  type="button"
-                >
-                  <img
-                    alt="..."
-                    className="w-5 mr-1"
-                    src="https://demos.creative-tim.com/notus-js/assets/img/google.svg"
-                  />
-                  Google{" "}
-                </button>
-              </div>
+
               <hr className="mt-6 border-b-1 border-blueGray-300" />
             </div>
             <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-              <div className="text-blueGray-400 text-center mb-3 font-bold">
-                <small>Or sign in with credentials</small>
-              </div>
               <form onSubmit={handleSubmit}>
                 <div className="relative w-full mb-3">
                   <label
@@ -147,6 +122,14 @@ export default function Login() {
                     {" "}
                     Sign In{" "}
                   </button>
+                  <Link href="/Sign-Up">
+                    <button
+                      className="bg-yellow-800 text-white active:bg-yellow-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150 mt-3"
+                      type="button"
+                    >
+                      Sign Up
+                    </button>
+                  </Link>
                 </div>
               </form>
             </div>

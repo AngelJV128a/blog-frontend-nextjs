@@ -53,7 +53,7 @@ export default function Posts() {
     <div className="px-4">
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mt-6">
       {posts.map((post) => (
-        <Card key={post.id} title={post.title} user={post.user_id} id={post.id} numLikes={ post.likes_count} numComments={post.comments_count}/>
+        <Card key={post.id} title={post.title} user={post.user.name} id={post.id} numLikes={ post.likes_count} numComments={post.comments_count}/>
       ))}
     </div>
     </div>

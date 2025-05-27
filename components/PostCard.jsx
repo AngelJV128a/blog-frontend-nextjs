@@ -4,6 +4,7 @@ import { useState } from "react";
 export default function PostCard({
   title,
   content,
+  autor,
   likes,
   initialComments = [],
 }) {
@@ -46,6 +47,9 @@ export default function PostCard({
   return (
     <div className="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6 space-y-4">
       <h2 className="text-2xl font-bold">{title}</h2>
+      <p className="text-sm text-gray-500">
+        Autor:  {autor}
+      </p>
       <p className="text-gray-700">{content}</p>
 
       <div className="text-sm text-gray-500">👍 {likes} likes</div>

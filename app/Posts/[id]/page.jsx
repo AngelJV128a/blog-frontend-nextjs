@@ -52,6 +52,7 @@ export default function Post() {
       <PostCard
         title={post.title}
         content={post.content}
+        autor = {post.user.name}
         likes={post.likes_count}
         initialComments={comments}
       />
