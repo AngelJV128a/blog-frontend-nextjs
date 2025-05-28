@@ -1,19 +1,23 @@
 "use client";
 import Card from "@/components/Card";
+import ReactPaginate from "react-paginate";
 import { useEffect, useState } from "react";
 
 export default function MisPosts() {
   const [posts, setPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0); // ReactPaginate usa base 0
+  const [totalPages, setTotalPages] = useState(0);
 
   // fetch solo si autenticado
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
+      const page = currentPage + 1; // Laravel usa base 1
 
       const user_id = 2; // puedes obtenerlo de tu auth
       try {
         const response = await fetch(
-          `http://localhost:8000/api/posts/user/${user_id}`,
+          `http://localhost:8000/api/posts/user/${user_id}?page=${page}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -26,15 +30,21 @@ export default function MisPosts() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        setPosts(data);
+        const json = await response.json();
+        setTotalPages(json.last_page);
+        setPosts(json.data);
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
     };
     // 👉 ¡Aquí haces la llamada!
     fetchData();
-  }, []);
+  }, [currentPage]);
+
+  const handlePageClick = ({ selected }) => {
+    console.log("selected", selected);
+    setCurrentPage(selected);
+  };
 
   return (
     <>
@@ -57,6 +67,23 @@ export default function MisPosts() {
             ))}
           </div>
         )}
+        <div className="mt-8 flex justify-center">
+          <ReactPaginate
+            previousLabel={"← Anterior"}
+            nextLabel={"Siguiente →"}
+            breakLabel={"..."}
+            pageCount={totalPages}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={3}
+            onPageChange={handlePageClick}
+            containerClassName={"flex space-x-2"}
+            pageClassName={"px-3 py-1 border rounded cursor-pointer"}
+            activeClassName={"bg-blue-500 text-white"}
+            previousClassName={"px-3 py-1 border rounded cursor-pointer"}
+            nextClassName={"px-3 py-1 border rounded cursor-pointer"}
+            disabledClassName={"opacity-50 cursor-not-allowed"}
+          />
+        </div>
       </div>
     </>
   );

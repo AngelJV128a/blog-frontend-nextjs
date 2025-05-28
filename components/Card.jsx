@@ -3,8 +3,17 @@ import {
   ChatBubbleBottomCenterTextIcon,
   HandThumbUpIcon,
 } from "@heroicons/react/24/solid";
+import LikeButton from "./LikeButton";
+import { useState } from "react";
+export default function Card({ title, user, id, numLikes, numComments }) {
+  const [likes, setLikes] = useState(numLikes);
 
-export default function Card({ title, user, id,numLikes,numComments }) {
+  const handleLikeToggle = (liked) => {
+    console.log(likes);
+    setLikes((prev) => prev + (liked ? 1 : -1));
+    console.log(likes);
+  };
+
   return (
     <div
       key={id}
@@ -25,8 +34,8 @@ export default function Card({ title, user, id,numLikes,numComments }) {
         </Link>
         <div className="flex items-center gap-4 ml-4 text-sm text-gray-600">
           <div className="flex items-center gap-1">
-            <HandThumbUpIcon className="w-5 h-5 text-blue-500" />
-            <span>{numLikes}</span>
+            <LikeButton onToggle={handleLikeToggle} initialLiked={false}/>
+            <span>{likes}</span>
           </div>
           <div className="flex items-center gap-1">
             <ChatBubbleBottomCenterTextIcon className="w-5 h-5 text-green-500" />
