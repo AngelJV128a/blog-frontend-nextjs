@@ -1,30 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthGuard } from "@/hooks/UseAuthGuard";
 import Card from "@/components/Card";
+import Cookies from 'js-cookie';
 
 import ReactPaginate from "react-paginate";
 
 export default function Posts() {
-  const { isLoading, isAuthenticated } = useAuthGuard();
   const router = useRouter();
 
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); // ReactPaginate usa base 0
   const [totalPages, setTotalPages] = useState(0);
 
-  // Redirección controlada
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push("/Login");
-    }
-  }, [isLoading, isAuthenticated, router]);
-
-  // fetch solo si autenticado
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get('token');
       const page = currentPage + 1; // Laravel usa base 1
 
       try {
@@ -51,19 +42,15 @@ export default function Posts() {
       }
     };
 
-    if (isAuthenticated) {
       fetchData();
-    }
-  }, [isAuthenticated,currentPage]);
-
-  // Renderizado condicional **solo en UI**
-  if (isLoading) return <div>Cargando...</div>;
-  if (!isAuthenticated) return null;
+      
+  }, [currentPage]);
 
   const handlePageClick = ({ selected }) => {
     console.log("selected", selected);
     setCurrentPage(selected);
   };
+
   return (
     <div className="px-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mt-6">

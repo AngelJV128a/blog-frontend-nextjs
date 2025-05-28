@@ -1,6 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 export default function UserDropdown() {
     const router = useRouter();
@@ -19,7 +20,8 @@ export default function UserDropdown() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    Cookies.remove('token');
+/*     localStorage.removeItem('token'); */
     router.push('/Login');
 
   }
