@@ -9,7 +9,7 @@ export default function MisPosts() {
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); // ReactPaginate usa base 0
   const [totalPages, setTotalPages] = useState(0);
-      const user = useUserStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
 
   // fetch solo si autenticado
   useEffect(() => {

@@ -5,12 +5,12 @@ import Swal from "sweetalert2";
 import { useUserStore } from "@/stores/userStore";
 import Cookie from "js-cookie";
 
-export default function CreateBlog() {
+export default function EditarPost({ post }) {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
   const [formData, setFormData] = useState({
-    title: "",
-    content: "",
+    title: post.title,
+    content: post.content,
     user_id: user.id,
   });
 
@@ -24,43 +24,55 @@ export default function CreateBlog() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, update it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const fetchPut = async () => {
+          const response = await fetch(
+            `http://localhost:8000/api/posts/${post.id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${Cookie.get("token")}`,
+              },
+              body: JSON.stringify(formData),
+            }
+          );
 
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/api/posts", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookie.get("token")}`,
-          },
-          body: JSON.stringify(formData),
-        });
+          if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+          const data = await response.json();
+          console.log(data);
+        };
 
-        const data = await response.json();
-        console.log("Post created:", data);
+        fetchPut();
+
         Swal.fire({
-          title: "Post created!",
-          text: "Your post has been created successfully!",
-          timer: 1500,
+          title: "Updated!",
+          text: "Your post has been updated.",
           icon: "success",
+          confirmButtonText: "Ok, got it!",
         });
-
         router.push("/Posts");
-      } catch (error) {
-        console.error("Error fetching posts:", error);
       }
-    };
-
-    fetchData();
+    });
+    console.log(formData);
   };
+
   return (
     <div>
       <div className="heading text-center font-bold text-2xl m-5 text-gray-800">
-        New Post
+        Edit Post
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -147,7 +159,7 @@ export default function CreateBlog() {
               type="submit"
               className="btn border border-indigo-500 p-1 px-4 font-semibold cursor-pointer text-gray-200 ml-2 bg-indigo-500"
             >
-              Post
+              Save
             </button>
           </div>
         </div>

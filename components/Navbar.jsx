@@ -2,8 +2,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import DropdownPerfil from "@/components/DropdownPerfil";
+import { useAuthStore } from '@/stores/authStore';
 export default function Navbar() {
   const pathname = usePathname();
+   const user = useAuthStore((state) => state.user); // ✅ define user
 
   return (
     <>
@@ -52,6 +54,20 @@ export default function Navbar() {
                     Mis Posts
                   </Link>
                 </li>
+                {user?.roles?.includes("admin") && (
+                  <li>
+                    <Link
+                      href="/Posts/Admin"
+                      className={`hover:text-gray-200 ${
+                        pathname === "/Posts/Admin"
+                          ? "text-white font-semibold border-b-2 border-white"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      Admin
+                    </Link>
+                  </li>
+                )}
               </ul>
 
               <div className="hidden xl:flex items-center space-x-5 items-center">

@@ -47,7 +47,9 @@ export default function Card({
           <DropdownMenuContent>
             <DropdownMenuLabel>Opciones</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <Link href={`/Posts/${id}/Editar`}>
             <DropdownMenuItem>Editar</DropdownMenuItem>
+            </Link>
             <DropdownMenuItem>Eliminar</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

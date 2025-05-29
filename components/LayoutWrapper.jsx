@@ -6,18 +6,19 @@ import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { useUserStore } from "@/stores/userStore";
 import Cookies from "js-cookie";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname();
   const hideLayout = pathname === "/Login" || pathname === "/Sign-Up";
 
   const setUser = useUserStore((state) => state.setUser);
-
+      const setUserFromToken = useAuthStore((state) => state.setUserFromToken);
 
   useEffect(() => {
     async function fetchUser() {
       try {
-              const token = Cookies.get("token");
+        const token = Cookies.get("token");
         const res = await fetch("http://127.0.0.1:8000/api/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -36,6 +37,13 @@ export default function LayoutWrapper({ children }) {
 
     fetchUser();
   }, [setUser]);
+
+
+
+  useEffect(() => {
+    setUserFromToken();
+  }, []);
+
   return (
     <>
       {!hideLayout && <Navbar />}

@@ -27,15 +27,12 @@ export default function Post() {
     };
 
     const fetchPost = async () => {
-      const response = await fetch(
-        `http://localhost:8000/api/posts/${id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
+      const response = await fetch(`http://localhost:8000/api/posts/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
       const data = await response.json();
       setPost(data);
     };
@@ -44,16 +41,17 @@ export default function Post() {
     fetchPost();
   }, [id]);
 
-  if (!post ) {
+  if (!post) {
     return <p>Cargando publicación y comentarios...</p>;
   }
 
   return (
     <div>
       <PostCard
+        id={post.id}
         title={post.title}
         content={post.content}
-        autor = {post.user.name}
+        autor={post.user.name}
         likes={post.likes_count}
         initialComments={comments}
       />

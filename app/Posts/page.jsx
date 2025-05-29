@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Card from "@/components/Card";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 import ReactPaginate from "react-paginate";
 
@@ -15,7 +15,7 @@ export default function Posts() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = Cookies.get('token');
+      const token = Cookies.get("token");
       const page = currentPage + 1; // Laravel usa base 1
 
       try {
@@ -42,8 +42,7 @@ export default function Posts() {
       }
     };
 
-      fetchData();
-      
+    fetchData();
   }, [currentPage]);
 
   const handlePageClick = ({ selected }) => {
@@ -53,6 +52,7 @@ export default function Posts() {
 
   return (
     <div className="px-4">
+              <h1 className="text-2xl font-bold mb-6 text-center">All Posts</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mt-6">
         {posts.map((post) => (
           <Card

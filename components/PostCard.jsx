@@ -1,7 +1,10 @@
 "use client";
 import { useState } from "react";
+import Cookies from "js-cookie";
+import { useUserStore } from "@/stores/userStore";
 
 export default function PostCard({
+  id,
   title,
   content,
   autor,
@@ -9,9 +12,10 @@ export default function PostCard({
   initialComments = [],
 }) {
   const [comments, setComments] = useState(initialComments);
+  const user = useUserStore((state) => state.user);
   const [newComment, setNewComment] = useState({
-    user_id: 2, // puedes obtenerlo de tu auth
-    post_id: 4, // asegúrate que `id` esté disponible
+    user_id: user.id, // puedes obtenerlo de tu auth
+    post_id: id, // asegúrate que `id` esté disponible
     content: "",
   });
 
@@ -28,7 +32,7 @@ export default function PostCard({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("token")}`,
           },
           body: JSON.stringify(newComment),
         });
@@ -47,9 +51,7 @@ export default function PostCard({
   return (
     <div className="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6 space-y-4">
       <h2 className="text-2xl font-bold">{title}</h2>
-      <p className="text-sm text-gray-500">
-        Autor:  {autor}
-      </p>
+      <p className="text-sm text-gray-500">Autor: {autor}</p>
       <p className="text-gray-700">{content}</p>
 
       <div className="text-sm text-gray-500">👍 {likes} likes</div>

@@ -1,12 +1,14 @@
-'use client';
-import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
+"use client";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function UserDropdown() {
-    const router = useRouter();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
+  const logout = useAuthStore((state) => state.logout);
 
   // Cierra el menú si se hace clic fuera
   useEffect(() => {
@@ -15,17 +17,15 @@ export default function UserDropdown() {
         setOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogout = () => {
-    Cookies.remove('token');
-/*     localStorage.removeItem('token'); */
-    router.push('/Login');
-
-  }
-
+    /*     Cookies.remove('token'); */
+    logout();
+    router.push("/Login");
+  };
 
   return (
     <div className="relative" ref={menuRef}>
@@ -52,9 +52,18 @@ export default function UserDropdown() {
       {open && (
         <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50 ">
           <ul className="py-2 text-sm text-gray-700">
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Perfil</li>
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Configuración</li>
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>Cerrar sesión</li>
+            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+              Perfil
+            </li>
+            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+              Configuración
+            </li>
+            <li
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={handleLogout}
+            >
+              Cerrar sesión
+            </li>
           </ul>
         </div>
       )}
