@@ -13,13 +13,13 @@ export default function LayoutWrapper({ children }) {
   const hideLayout = pathname === "/Login" || pathname === "/Sign-Up";
 
   const setUser = useUserStore((state) => state.setUser);
-      const setUserFromToken = useAuthStore((state) => state.setUserFromToken);
+  const setUserFromToken = useAuthStore((state) => state.setUserFromToken);
 
   useEffect(() => {
     async function fetchUser() {
       try {
         const token = Cookies.get("token");
-        const res = await fetch("http://127.0.0.1:8000/api/auth/me", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -37,8 +37,6 @@ export default function LayoutWrapper({ children }) {
 
     fetchUser();
   }, [setUser]);
-
-
 
   useEffect(() => {
     setUserFromToken();

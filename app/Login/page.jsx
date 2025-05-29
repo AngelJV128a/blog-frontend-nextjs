@@ -25,8 +25,7 @@ export default function Login() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/auth/login", {
-          // fíjate que te falta ":" después de "http"
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -41,7 +40,7 @@ export default function Login() {
 
         const data = await response.json();
         console.log("Access token:", data.access_token);
-        Cookies.set("token", data.access_token, { expires: 1 / 24 }); // 1 día
+        Cookies.set("token", data.access_token, { expires: 1 / 24 }); // 1 hora
         router.push("/Posts");
       } catch (error) {
         // Aquí capturas cualquier error de red o del fetch

@@ -28,7 +28,7 @@ export default function PostCard({
     // CORRECTO: función async autoejecutable
     (async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/comments`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

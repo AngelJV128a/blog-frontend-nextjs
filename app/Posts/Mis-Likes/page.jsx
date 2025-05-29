@@ -20,7 +20,7 @@ export default function MisPosts() {
       const user_id = user.id; // puedes obtenerlo de tu auth
       try {
         const response = await fetch(
-          `http://localhost:8000/api/posts/likes/${user_id}?page=${page}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/likes/${user_id}?page=${page}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -90,7 +90,6 @@ export default function MisPosts() {
             disabledClassName={"opacity-50 cursor-not-allowed"}
           />
         </div>
-        user id: {user.id}
       </div>
     </>
   );

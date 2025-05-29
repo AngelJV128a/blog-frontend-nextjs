@@ -1,14 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Card from "@/components/Card";
 import Cookies from "js-cookie";
 
 import ReactPaginate from "react-paginate";
 
 export default function Posts() {
-  const router = useRouter();
-
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); // ReactPaginate usa base 0
   const [totalPages, setTotalPages] = useState(0);
@@ -20,7 +17,7 @@ export default function Posts() {
 
       try {
         const response = await fetch(
-          `http://localhost:8000/api/posts?page=${page}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/posts?page=${page}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -52,7 +49,7 @@ export default function Posts() {
 
   return (
     <div className="px-4">
-              <h1 className="text-2xl font-bold mb-6 text-center">All Posts</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">All Posts</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mt-6">
         {posts.map((post) => (
           <Card

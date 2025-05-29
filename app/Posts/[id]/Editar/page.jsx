@@ -13,7 +13,7 @@ export default function Editar() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/posts/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${Cookies.get("token")}`,

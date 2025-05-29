@@ -20,7 +20,7 @@ export default function MisPosts() {
       const user_id = user.id; // puedes obtenerlo de tu auth
       try {
         const response = await fetch(
-          `http://localhost:8000/api/posts/user/${user_id}?page=${page}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/user/${user_id}?page=${page}`,
           {
             headers: {
               "Content-Type": "application/json",

@@ -36,7 +36,7 @@ export default function EditarPost({ post }) {
       if (result.isConfirmed) {
         const fetchPut = async () => {
           const response = await fetch(
-            `http://localhost:8000/api/posts/${post.id}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/posts/${post.id}`,
             {
               method: "PUT",
               headers: {

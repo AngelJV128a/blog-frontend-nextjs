@@ -14,7 +14,7 @@ export default function Post() {
   useEffect(() => {
     const fetchComments = async () => {
       const response = await fetch(
-        `http://localhost:8000/api/comments?post_id=${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/comments?post_id=${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export default function Post() {
     };
 
     const fetchPost = async () => {
-      const response = await fetch(`http://localhost:8000/api/posts/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("token")}`,
