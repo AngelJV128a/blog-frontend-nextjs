@@ -3,10 +3,31 @@ import {
   ChatBubbleBottomCenterTextIcon,
   HandThumbUpIcon,
 } from "@heroicons/react/24/solid";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { usePathname } from "next/navigation";
+
 import LikeButton from "./LikeButton";
 import { useState } from "react";
-export default function Card({ title, user, id, numLikes, numComments }) {
+import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+
+
+export default function Card({
+  title,
+  user,
+  id,
+  numLikes,
+  numComments,
+  liked,
+}) {
   const [likes, setLikes] = useState(numLikes);
+  const pathname = usePathname();
 
   const handleLikeToggle = (liked) => {
     console.log(likes);
@@ -19,6 +40,20 @@ export default function Card({ title, user, id, numLikes, numComments }) {
       key={id}
       className="flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl p-6"
     >
+      {pathname === "/Posts/Mis-Posts" && (
+            <div className="flex justify-end">
+        <DropdownMenu>
+          <DropdownMenuTrigger><EllipsisVerticalIcon className="h-6 w-6 text-gray-600" /></DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Opciones</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Editar</DropdownMenuItem>
+            <DropdownMenuItem>Eliminar</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        </div>
+      )}
+
       <h5 className="mb-2 text-xl font-semibold text-blue-gray-900">{title}</h5>
       <p className="text-base font-light leading-relaxed text-inherit mb-4">
         Autor: {user}
@@ -34,7 +69,7 @@ export default function Card({ title, user, id, numLikes, numComments }) {
         </Link>
         <div className="flex items-center gap-4 ml-4 text-sm text-gray-600">
           <div className="flex items-center gap-1">
-            <LikeButton onToggle={handleLikeToggle} initialLiked={false}/>
+            <LikeButton onToggle={handleLikeToggle} initialLiked={liked} />
             <span>{likes}</span>
           </div>
           <div className="flex items-center gap-1">

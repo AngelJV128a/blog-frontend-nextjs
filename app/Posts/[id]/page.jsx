@@ -2,6 +2,7 @@
 import PostCard from "@/components/PostCard";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 export default function Post() {
   const params = useParams();
@@ -17,7 +18,7 @@ export default function Post() {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("token")}`,
           },
         }
       );
@@ -31,7 +32,7 @@ export default function Post() {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookies.get("token")}`,
           },
         }
       );

@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Router from "next/router";
 import Link from "next/link";
 import Cookies from 'js-cookie';
 
@@ -42,7 +41,7 @@ export default function Login() {
 
         const data = await response.json();
         console.log("Access token:", data.access_token);
-        Cookies.set("token", data.access_token, { expires: 1 }); // 1 día
+        Cookies.set("token", data.access_token, { expires: 1 / 24 }); // 1 día
         router.push("/Posts");
       } catch (error) {
         // Aquí capturas cualquier error de red o del fetch

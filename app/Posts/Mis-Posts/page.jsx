@@ -2,19 +2,22 @@
 import Card from "@/components/Card";
 import ReactPaginate from "react-paginate";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useUserStore } from "@/stores/userStore";
 
 export default function MisPosts() {
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); // ReactPaginate usa base 0
   const [totalPages, setTotalPages] = useState(0);
+      const user = useUserStore((state) => state.user);
 
   // fetch solo si autenticado
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
       const page = currentPage + 1; // Laravel usa base 1
 
-      const user_id = 2; // puedes obtenerlo de tu auth
+      const user_id = user.id; // puedes obtenerlo de tu auth
       try {
         const response = await fetch(
           `http://localhost:8000/api/posts/user/${user_id}?page=${page}`,
@@ -63,6 +66,9 @@ export default function MisPosts() {
                 title={post.title}
                 user={post.user.name}
                 id={post.id}
+                numLikes={post.likes_count}
+                numComments={post.comments_count}
+                liked={post.liked}
               />
             ))}
           </div>

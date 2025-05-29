@@ -2,13 +2,16 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from "sweetalert2";
+import { useUserStore } from "@/stores/userStore";
+import Cookie from "js-cookie";
 
 export default function CreateBlog() {
   const router = useRouter();
+    const user = useUserStore((state) => state.user);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    user_id: 2,
+    user_id: user.id,
   });
 
   const handleChange = (e) => {
@@ -28,7 +31,7 @@ export default function CreateBlog() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${Cookie.get("token")}`,
           },
           body: JSON.stringify(formData),
         });

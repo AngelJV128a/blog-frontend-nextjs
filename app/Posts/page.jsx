@@ -62,6 +62,7 @@ export default function Posts() {
             id={post.id}
             numLikes={post.likes_count}
             numComments={post.comments_count}
+            liked={post.liked}
           />
         ))}
       </div>
