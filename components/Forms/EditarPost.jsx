@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Swal from "sweetalert2";
 import { useUserStore } from "@/stores/userStore";
 import Cookie from "js-cookie";
@@ -8,11 +8,18 @@ import Cookie from "js-cookie";
 export default function EditarPost({ post }) {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
-  const [formData, setFormData] = useState({
-    title: post.title,
-    content: post.content,
-    user_id: user.id,
-  });
+// Inicializa formData solo cuando user y post están definidos
+const [formData, setFormData] = useState(null);
+
+useEffect(() => {
+  if (user && post) {
+    setFormData({
+      title: post.title,
+      content: post.content,
+      user_id: user.id,
+    });
+  }
+}, [user, post]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,6 +76,8 @@ export default function EditarPost({ post }) {
     console.log(formData);
   };
 
+  if (!formData) return <p>Cargando formulario de edición...</p>;
+  
   return (
     <div>
       <div className="heading text-center font-bold text-2xl m-5 text-gray-800">

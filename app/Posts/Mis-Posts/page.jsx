@@ -4,6 +4,7 @@ import ReactPaginate from "react-paginate";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useUserStore } from "@/stores/userStore";
+import axios from "axios";
 
 export default function MisPosts() {
   const [posts, setPosts] = useState([]);
@@ -11,38 +12,36 @@ export default function MisPosts() {
   const [totalPages, setTotalPages] = useState(0);
   const user = useUserStore((state) => state.user);
 
-  // fetch solo si autenticado
   useEffect(() => {
+    if (!user) return; // ⛔ espera a que el usuario esté definido
+
     const fetchData = async () => {
       const token = Cookies.get("token");
       const page = currentPage + 1; // Laravel usa base 1
 
-      const user_id = user.id; // puedes obtenerlo de tu auth
+      // const user_id = user.id; // puedes usar esto si es dinámico
+      const user_id = 2;
+
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/user/${user_id}?page=${page}`,
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/user/${user_id}`,
           {
+            params: { page },
             headers: {
-              "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const json = await response.json();
+        const json = response.data;
         setTotalPages(json.last_page);
         setPosts(json.data);
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
     };
-    // 👉 ¡Aquí haces la llamada!
+
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, user]);
 
   const handlePageClick = ({ selected }) => {
     console.log("selected", selected);

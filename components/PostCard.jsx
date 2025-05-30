@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useUserStore } from "@/stores/userStore";
+import axios from "axios";
 
 export default function PostCard({
   id,
@@ -13,32 +14,44 @@ export default function PostCard({
 }) {
   const [comments, setComments] = useState(initialComments);
   const user = useUserStore((state) => state.user);
+
   const [newComment, setNewComment] = useState({
-    user_id: user.id, // puedes obtenerlo de tu auth
-    post_id: id, // asegúrate que `id` esté disponible
+    user_id: null,
+    post_id: null,
     content: "",
   });
 
+  useEffect(() => {
+    if (user && id) {
+      setNewComment({
+        user_id: user.id,
+        post_id: id,
+        content: "",
+      });
+    }
+  }, [user, id]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!newComment.content.trim()) return;
+
     setComments([...comments, newComment]);
     console.log(newComment);
 
-    // CORRECTO: función async autoejecutable
     (async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-          body: JSON.stringify(newComment),
-        });
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/comments`,
+          newComment,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
+        );
 
-        const data = await response.json();
-        console.log(data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error al enviar comentario:", error);
       }

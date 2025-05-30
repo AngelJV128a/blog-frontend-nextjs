@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import Card from "@/components/Card";
 import Cookies from "js-cookie";
-
 import ReactPaginate from "react-paginate";
+import axios from "axios";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
@@ -16,22 +16,16 @@ export default function Posts() {
       const page = currentPage + 1; // Laravel usa base 1
 
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts?page=${page}`,
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts`,
           {
+            params: { page },
             headers: {
-              "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const json = await response.json();
-        /*         console.log(json.data); */
+        const json = response.data;
         setTotalPages(json.last_page);
         setPosts(json.data);
       } catch (error) {

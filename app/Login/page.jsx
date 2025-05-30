@@ -3,10 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function Login() {
   const router = useRouter();
+  const setUserFromToken = useAuthStore((state) => state.setUserFromToken);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -25,13 +27,16 @@ export default function Login() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
 
         if (!response.ok) {
           // Si la respuesta no es exitosa, lanza un error con el status
@@ -41,6 +46,7 @@ export default function Login() {
         const data = await response.json();
         console.log("Access token:", data.access_token);
         Cookies.set("token", data.access_token, { expires: 1 / 24 }); // 1 hora
+        setUserFromToken();
         router.push("/Posts");
       } catch (error) {
         // Aquí capturas cualquier error de red o del fetch
@@ -50,7 +56,6 @@ export default function Login() {
 
     fetchData();
 
-    //console.log(formData);
   };
 
   return (

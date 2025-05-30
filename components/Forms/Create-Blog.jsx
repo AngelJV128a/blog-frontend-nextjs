@@ -4,6 +4,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import { useUserStore } from "@/stores/userStore";
 import Cookie from "js-cookie";
+import axios from "axios";
 
 export default function CreateBlog() {
   const router = useRouter();
@@ -27,21 +28,18 @@ export default function CreateBlog() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookie.get("token")}`,
-          },
-          body: JSON.stringify(formData),
-        });
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookie.get("token")}`,
+            },
+          }
+        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Post created:", data);
+        console.log("Post created:", response.data);
         Swal.fire({
           title: "Post created!",
           text: "Your post has been created successfully!",
@@ -51,12 +49,13 @@ export default function CreateBlog() {
 
         router.push("/Posts");
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error creating post:", error);
       }
     };
 
     fetchData();
   };
+
   return (
     <div>
       <div className="heading text-center font-bold text-2xl m-5 text-gray-800">

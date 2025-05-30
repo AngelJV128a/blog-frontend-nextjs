@@ -13,6 +13,9 @@ export default function MisPosts() {
 
   // fetch solo si autenticado
   useEffect(() => {
+
+        if (!user) return; // ⛔ espera a que el usuario esté definido
+
     const fetchData = async () => {
       const token = Cookies.get("token");
       const page = currentPage + 1; // Laravel usa base 1
@@ -43,7 +46,7 @@ export default function MisPosts() {
     };
     // 👉 ¡Aquí haces la llamada!
     fetchData();
-  }, [currentPage]);
+  }, [currentPage,user]);
 
   const handlePageClick = ({ selected }) => {
     console.log("selected", selected);
