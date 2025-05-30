@@ -1,25 +1,26 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useUserStore } from "@/stores/userStore";
-import Cookie from "js-cookie";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 export default function EditarPost({ post }) {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
-// Inicializa formData solo cuando user y post están definidos
-const [formData, setFormData] = useState(null);
+  // Inicializa formData solo cuando user y post están definidos
+  const [formData, setFormData] = useState(null);
 
-useEffect(() => {
-  if (user && post) {
-    setFormData({
-      title: post.title,
-      content: post.content,
-      user_id: user.id,
-    });
-  }
-}, [user, post]);
+  useEffect(() => {
+    if (user && post) {
+      setFormData({
+        title: post.title,
+        content: post.content,
+        user_id: user.id,
+      });
+    }
+  }, [user, post]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,6 +32,7 @@ useEffect(() => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -42,24 +44,25 @@ useEffect(() => {
     }).then((result) => {
       if (result.isConfirmed) {
         const fetchPut = async () => {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/posts/${post.id}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${Cookie.get("token")}`,
-              },
-              body: JSON.stringify(formData),
-            }
-          );
+          try {
+            const response = await axios.put(
+              `${process.env.NEXT_PUBLIC_API_URL}/posts/${post.id}`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${Cookies.get("token")}`,
+                },
+              }
+            );
 
-          if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
+            console.log(response.data);
+          } catch (error) {
+            console.error(
+              "Error al actualizar el post:",
+              error.response?.status || error.message
+            );
           }
-
-          const data = await response.json();
-          console.log(data);
         };
 
         fetchPut();
@@ -70,14 +73,15 @@ useEffect(() => {
           icon: "success",
           confirmButtonText: "Ok, got it!",
         });
+
         router.push("/Posts");
       }
     });
+
     console.log(formData);
   };
-
   if (!formData) return <p>Cargando formulario de edición...</p>;
-  
+
   return (
     <div>
       <div className="heading text-center font-bold text-2xl m-5 text-gray-800">

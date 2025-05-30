@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { useAuthStore } from "@/stores/authStore";
+import axios from "axios";
 
 export default function Login() {
   const router = useRouter();
@@ -27,35 +28,30 @@ export default function Login() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+          formData,
           {
-            method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(formData),
           }
         );
 
-        if (!response.ok) {
-          // Si la respuesta no es exitosa, lanza un error con el status
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = response.data;
         console.log("Access token:", data.access_token);
+
         Cookies.set("token", data.access_token, { expires: 1 / 24 }); // 1 hora
         setUserFromToken();
         router.push("/Posts");
       } catch (error) {
-        // Aquí capturas cualquier error de red o del fetch
-        console.error("Error en fetch:", error.message);
+        console.error(
+          "Error en fetch:",
+          error.response?.status || error.message
+        );
       }
     };
 
     fetchData();
-
   };
 
   return (
