@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Cookies from "js-cookie";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
+import { useForm } from "react-hook-form";
 
 export default function PostCard({
   id,
@@ -15,50 +16,41 @@ export default function PostCard({
   const [comments, setComments] = useState(initialComments);
   const user = useUserStore((state) => state.user);
 
-  const [newComment, setNewComment] = useState({
-    user_id: null,
-    post_id: null,
-    content: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
-  useEffect(() => {
-    if (user && id) {
-      setNewComment({
-        user_id: user.id,
-        post_id: id,
-        content: "",
-      });
+  const onSubmit = async (data) => {
+    if (!data.content.trim()) return;
+
+    const nuevoComentario = {
+      ...data,
+      user_id: user.id,
+      post_id: id,
+    };
+
+    setComments([...comments, nuevoComentario]);
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/comments`,
+        nuevoComentario,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error al enviar comentario:", error);
     }
-  }, [user, id]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!newComment.content.trim()) return;
-
-    setComments([...comments, newComment]);
-    console.log(newComment);
-
-    (async () => {
-      try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/comments`,
-          newComment,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          }
-        );
-
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error al enviar comentario:", error);
-      }
-    })();
-
-    setNewComment((prev) => ({ ...prev, content: "" }));
-    console.log("enviando comentario");
+    reset(); // limpia el campo 'content'
   };
 
   return (
@@ -75,7 +67,7 @@ export default function PostCard({
         <ul className="space-y-2">
           {comments.map((c, i) => (
             <li key={i} className="bg-gray-100 p-3 rounded">
-              <p className="text-sm text-gray-800 font-semibold">{c.user_id}</p>
+              <p className="text-sm text-gray-800 font-semibold">usuario: {c.user_id}</p>
               <p className="text-sm text-gray-700">{c.content}</p>
             </li>
           ))}
@@ -83,20 +75,17 @@ export default function PostCard({
       </div>
 
       {/* Nuevo comentario */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-4">
           <textarea
-            value={newComment.content}
-            onChange={(e) =>
-              setNewComment((prev) => ({
-                ...prev,
-                content: e.target.value,
-              }))
-            }
+            {...register("content", { required: "El comentario es obligatorio" })}
             placeholder="Escribe tu comentario..."
             className="w-full border border-gray-300 rounded p-2 resize-none"
             rows={3}
           />
+           {errors.content && (
+            <p className="text-red-500 text-sm">{errors.content.message}</p>
+          )}
           <button
             type="submit"
             className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"

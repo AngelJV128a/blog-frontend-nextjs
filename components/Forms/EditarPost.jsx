@@ -1,37 +1,32 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useUserStore } from "@/stores/userStore";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useForm } from "react-hook-form";
 
 export default function EditarPost({ post }) {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
-  // Inicializa formData solo cuando user y post están definidos
-  const [formData, setFormData] = useState(null);
 
-  useEffect(() => {
-    if (user && post) {
-      setFormData({
-        title: post.title,
-        content: post.content,
-        user_id: user.id,
-      });
-    }
-  }, [user, post]);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      title: post.title,
+      content: post.content,
+    },
+  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
+    const body = {
+      ...data,
+      user_id: user.id,
+    };
+    console.log(body);
 
     Swal.fire({
       title: "Are you sure?",
@@ -44,10 +39,11 @@ export default function EditarPost({ post }) {
     }).then((result) => {
       if (result.isConfirmed) {
         const fetchPut = async () => {
+          console.log(body);
           try {
             const response = await axios.put(
               `${process.env.NEXT_PUBLIC_API_URL}/posts/${post.id}`,
-              formData,
+              body,
               {
                 headers: {
                   "Content-Type": "application/json",
@@ -64,7 +60,6 @@ export default function EditarPost({ post }) {
             );
           }
         };
-
         fetchPut();
 
         Swal.fire({
@@ -73,14 +68,10 @@ export default function EditarPost({ post }) {
           icon: "success",
           confirmButtonText: "Ok, got it!",
         });
-
         router.push("/Posts");
       }
     });
-
-    console.log(formData);
   };
-  if (!formData) return <p>Cargando formulario de edición...</p>;
 
   return (
     <div>
@@ -88,7 +79,7 @@ export default function EditarPost({ post }) {
         Edit Post
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="editor mx-auto w-10/12 flex flex-col text-gray-800 border border-gray-300 p-4 shadow-lg max-w-2xl">
           <input
             name="title"
@@ -96,19 +87,23 @@ export default function EditarPost({ post }) {
             spellCheck="false"
             placeholder="Title"
             type="text"
-            value={formData.title}
-            onChange={handleChange}
-            required
+            {...register("title", { required: "El titulo es obligatorio" })}
           />
+          {errors.title && (
+            <p style={{ color: "red" }}>{errors.title.message}</p>
+          )}
           <textarea
             name="content"
             className="description bg-gray-100 sec p-3 h-60 border border-gray-300 outline-none"
             spellCheck="false"
             placeholder="Describe everything about this post here"
-            value={formData.content}
-            onChange={handleChange}
-            required
+            {...register("content", {
+              required: "El contenido es obligatorio",
+            })}
           ></textarea>
+          {errors.content && (
+            <p style={{ color: "red" }}>{errors.content.message}</p>
+          )}
 
           <div className="icons flex text-gray-500 m-2">
             <svg

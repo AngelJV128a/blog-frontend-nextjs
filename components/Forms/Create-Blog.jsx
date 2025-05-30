@@ -1,59 +1,56 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import Swal from "sweetalert2";
 import { useUserStore } from "@/stores/userStore";
 import Cookie from "js-cookie";
 import axios from "axios";
+import { useForm } from "react-hook-form";
 
 export default function CreateBlog() {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
-  const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    user_id: user.id,
-  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+  const body = {
+    ...data,
+    user_id: user.id,
+  };
+  console.log(body);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookie.get("token")}`,
+          },
+        }
+      );
+
+      console.log("Post created:", response.data);
+      Swal.fire({
+        title: "Post created!",
+        text: "Your post has been created successfully!",
+        timer: 1500,
+        icon: "success",
+      });
+
+      router.push("/Posts");
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const fetchData = async () => {
-      try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookie.get("token")}`,
-            },
-          }
-        );
-
-        console.log("Post created:", response.data);
-        Swal.fire({
-          title: "Post created!",
-          text: "Your post has been created successfully!",
-          timer: 1500,
-          icon: "success",
-        });
-
-        router.push("/Posts");
-      } catch (error) {
-        console.error("Error creating post:", error);
-      }
-    };
-
-    fetchData();
+  fetchData();
   };
 
   return (
@@ -62,7 +59,7 @@ export default function CreateBlog() {
         New Post
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="editor mx-auto w-10/12 flex flex-col text-gray-800 border border-gray-300 p-4 shadow-lg max-w-2xl">
           <input
             name="title"
@@ -70,19 +67,19 @@ export default function CreateBlog() {
             spellCheck="false"
             placeholder="Title"
             type="text"
-            value={formData.title}
-            onChange={handleChange}
-            required
+            {...register("title", { required: "El titulo es obligatorio" })}
           />
+          {errors.title && <p style={{ color: "red" }}>{errors.title.message}</p>}
           <textarea
             name="content"
             className="description bg-gray-100 sec p-3 h-60 border border-gray-300 outline-none"
             spellCheck="false"
             placeholder="Describe everything about this post here"
-            value={formData.content}
-            onChange={handleChange}
-            required
+            {...register("content", {
+              required: "El contenido es obligatorio",
+            })}
           ></textarea>
+        {errors.content && <p style={{ color: "red" }}>{errors.content.message}</p>}
 
           <div className="icons flex text-gray-500 m-2">
             <svg

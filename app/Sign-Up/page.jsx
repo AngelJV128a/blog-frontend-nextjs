@@ -1,22 +1,49 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
 
 export default function SignUpForm() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
+  const router = useRouter();
+  const{
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const onSubmit = async (data) => {
+    const body = {
+      ...data,
+    };
+    console.log(body);
+    const fetchData = async () => {
+      try{
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(body),
+            }
+          );
+          const data = await response.json();
+          console.log(data);
+          Swal.fire({
+            title: 'Registro exitoso!',
+            text: 'Tu cuenta ha sido creada exitosamente.',
+            timer: 1500,
+            icon: 'success',
+          });
+          router.push('/Login');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Formulario enviado:', formData);
-    // Aquí puedes hacer tu lógica de registro (fetch, axios, etc.)
+      }catch(error){
+        console.error("Error en fetch:",error.response?.status || error.message);
+      }
+    };
+    fetchData();
   };
 
   return (
@@ -33,7 +60,7 @@ export default function SignUpForm() {
           </div>
 
           <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="relative w-full mb-3">
                 <label
                   className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -47,8 +74,7 @@ export default function SignUpForm() {
                   id="name"
                   className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Tu nombre"
-                  value={formData.name}
-                  onChange={handleChange}
+                  {...register("name", { required: "El nombre es obligatorio" })}
                 />
               </div>
 
@@ -65,8 +91,7 @@ export default function SignUpForm() {
                   id="email"
                   className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Correo electrónico"
-                  value={formData.email}
-                  onChange={handleChange}
+                  {...register("email", { required: "El correo es obligatorio" })}
                 />
               </div>
 
@@ -83,8 +108,7 @@ export default function SignUpForm() {
                   id="password"
                   className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="********"
-                  value={formData.password}
-                  onChange={handleChange}
+                  {...register("password", { required: "La contraseña es obligatoria" })}
                 />
               </div>
 

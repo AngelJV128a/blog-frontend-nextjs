@@ -6,30 +6,27 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import { useAuthStore } from "@/stores/authStore";
 import axios from "axios";
+import { useForm } from "react-hook-form";
 
 export default function Login() {
   const router = useRouter();
   const setUserFromToken = useAuthStore((state) => state.setUserFromToken);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const fetchData = async () => {
+  const onSubmit = async (data) => {
+    const body = {
+      ...data,
+    };
+    console.log(body);
+        const fetchData = async () => {
       try {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-          formData,
+          body,
           {
             headers: {
               "Content-Type": "application/json",
@@ -69,7 +66,7 @@ export default function Login() {
               <hr className="mt-6 border-b-1 border-blueGray-300" />
             </div>
             <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="relative w-full mb-3">
                   <label
                     className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -82,9 +79,11 @@ export default function Login() {
                     name="email"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    {...register("email", { required: "El email es obligatorio" })}
                   />
+                  {errors.email && (
+                    <p style={{ color: "red" }}>{errors.email.message}</p>
+                  )}
                 </div>
                 <div className="relative w-full mb-3">
                   <label
@@ -98,9 +97,11 @@ export default function Login() {
                     name="password"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    {...register("password", { required: "La contraseña es obligatoria" })}
                   />
+                  {errors.password && (
+                    <p style={{ color: "red" }}>{errors.password.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="inline-flex items-center cursor-pointer">
