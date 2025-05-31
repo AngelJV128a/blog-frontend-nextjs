@@ -30,6 +30,9 @@ export default function PostCard({
       ...data,
       user_id: user.sub,
       post_id: id,
+      user: {
+        name: user.name,
+      }
     };
 
     setComments([...comments, nuevoComentario]);
@@ -68,7 +71,7 @@ export default function PostCard({
           {comments.map((c, i) => (
             <li key={i} className="bg-gray-100 p-3 rounded">
               <p className="text-sm text-gray-800 font-semibold">
-                usuario: {c.user_id}
+                {c.user.name}
               </p>
               <p className="text-sm text-gray-700">{c.content}</p>
             </li>

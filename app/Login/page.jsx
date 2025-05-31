@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { useAuthStore } from "@/stores/authStore";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
 
 export default function Login() {
   const router = useRouter();
@@ -23,9 +24,10 @@ export default function Login() {
       ...data,
     };
     console.log(body);
-        const fetchData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
           body,
           {
             headers: {
@@ -41,10 +43,17 @@ export default function Login() {
         setUserFromToken();
         router.push("/Posts");
       } catch (error) {
-        console.error(
+        /*         console.error(
           "Error en fetch:",
           error.response?.status || error.message
-        );
+        ); */
+        if (error.response?.status === 401) {
+          Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: "Email o contraseña incorrectos",
+          });
+        }
       }
     };
 
@@ -79,7 +88,13 @@ export default function Login() {
                     name="email"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Email"
-                    {...register("email", { required: "El email es obligatorio" })}
+                    {...register("email", {
+                      required: "El email es obligatorio",
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "El email no es válido",
+                      },
+                    })}
                   />
                   {errors.email && (
                     <p style={{ color: "red" }}>{errors.email.message}</p>
@@ -97,7 +112,13 @@ export default function Login() {
                     name="password"
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Password"
-                    {...register("password", { required: "La contraseña es obligatoria" })}
+                    {...register("password", {
+                      required: "La contraseña es obligatoria",
+                      minLength: {
+                        value: 8,
+                        message: "La contraseña debe tener al menos 8 caracteres",
+                      },
+                    })}
                   />
                   {errors.password && (
                     <p style={{ color: "red" }}>{errors.password.message}</p>

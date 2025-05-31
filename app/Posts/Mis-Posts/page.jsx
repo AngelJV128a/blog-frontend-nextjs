@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useAuthStore } from "@/stores/authStore";
+import Spinner from "@/components/Spinner";
 
 export default function MisPosts() {
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); // ReactPaginate usa base 0
   const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const user = useAuthStore((state) => state.user);
 
@@ -36,6 +38,7 @@ export default function MisPosts() {
         const json = response.data;
         setTotalPages(json.last_page);
         setPosts(json.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
@@ -51,6 +54,11 @@ export default function MisPosts() {
 
   return (
     <>
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Spinner />
+            </div>
+          ) : (
       <div className="px-4">
         <h1 className="text-2xl font-bold mb-6 text-center">My Posts</h1>
 
@@ -91,6 +99,7 @@ export default function MisPosts() {
           />
         </div>
       </div>
+          )}
     </>
   );
 }
