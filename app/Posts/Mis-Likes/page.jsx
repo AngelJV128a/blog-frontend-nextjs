@@ -3,14 +3,14 @@ import Card from "@/components/Card";
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import Cookies from "js-cookie";
-import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function MisPosts() {
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); // ReactPaginate usa base 0
   const [totalPages, setTotalPages] = useState(0);
-  const user = useUserStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (!user) return; // ⛔ espera a que el usuario esté definido
@@ -18,10 +18,11 @@ export default function MisPosts() {
     const fetchData = async () => {
       const token = Cookies.get("token");
       const page = currentPage + 1; // Laravel usa base 1
-      const user_id = user.id;
+      const user_id = user.sub;
 
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/likes/${user_id}?page=${page}`,
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/likes/${user_id}?page=${page}`,
           {
             headers: {
               "Content-Type": "application/json",

@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import Cookies from "js-cookie";
-import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function PostCard({
   id,
@@ -14,7 +14,7 @@ export default function PostCard({
   initialComments = [],
 }) {
   const [comments, setComments] = useState(initialComments);
-  const user = useUserStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
 
   const {
     register,
@@ -28,7 +28,7 @@ export default function PostCard({
 
     const nuevoComentario = {
       ...data,
-      user_id: user.id,
+      user_id: user.sub,
       post_id: id,
     };
 
@@ -67,7 +67,9 @@ export default function PostCard({
         <ul className="space-y-2">
           {comments.map((c, i) => (
             <li key={i} className="bg-gray-100 p-3 rounded">
-              <p className="text-sm text-gray-800 font-semibold">usuario: {c.user_id}</p>
+              <p className="text-sm text-gray-800 font-semibold">
+                usuario: {c.user_id}
+              </p>
               <p className="text-sm text-gray-700">{c.content}</p>
             </li>
           ))}
@@ -78,12 +80,14 @@ export default function PostCard({
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-4">
           <textarea
-            {...register("content", { required: "El comentario es obligatorio" })}
+            {...register("content", {
+              required: "El comentario es obligatorio",
+            })}
             placeholder="Escribe tu comentario..."
             className="w-full border border-gray-300 rounded p-2 resize-none"
             rows={3}
           />
-           {errors.content && (
+          {errors.content && (
             <p className="text-red-500 text-sm">{errors.content.message}</p>
           )}
           <button

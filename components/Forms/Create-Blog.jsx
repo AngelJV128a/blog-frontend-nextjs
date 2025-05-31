@@ -1,14 +1,14 @@
 "use client";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { useUserStore } from "@/stores/userStore";
 import Cookie from "js-cookie";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function CreateBlog() {
   const router = useRouter();
-  const user = useUserStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
 
   const {
     register,
@@ -17,40 +17,40 @@ export default function CreateBlog() {
   } = useForm();
 
   const onSubmit = async (data) => {
-  const body = {
-    ...data,
-    user_id: user.id,
-  };
-  console.log(body);
+    const body = {
+      ...data,
+      user_id: user.sub,
+    };
+    console.log(body);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts`,
-        body,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookie.get("token")}`,
-          },
-        }
-      );
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts`,
+          body,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookie.get("token")}`,
+            },
+          }
+        );
 
-      console.log("Post created:", response.data);
-      Swal.fire({
-        title: "Post created!",
-        text: "Your post has been created successfully!",
-        timer: 1500,
-        icon: "success",
-      });
+        console.log("Post created:", response.data);
+        Swal.fire({
+          title: "Post created!",
+          text: "Your post has been created successfully!",
+          timer: 1500,
+          icon: "success",
+        });
 
-      router.push("/Posts");
-    } catch (error) {
-      console.error("Error creating post:", error);
-    }
-  };
+        router.push("/Posts");
+      } catch (error) {
+        console.error("Error creating post:", error);
+      }
+    };
 
-  fetchData();
+    fetchData();
   };
 
   return (
@@ -69,7 +69,9 @@ export default function CreateBlog() {
             type="text"
             {...register("title", { required: "El titulo es obligatorio" })}
           />
-          {errors.title && <p style={{ color: "red" }}>{errors.title.message}</p>}
+          {errors.title && (
+            <p style={{ color: "red" }}>{errors.title.message}</p>
+          )}
           <textarea
             name="content"
             className="description bg-gray-100 sec p-3 h-60 border border-gray-300 outline-none"
@@ -79,7 +81,9 @@ export default function CreateBlog() {
               required: "El contenido es obligatorio",
             })}
           ></textarea>
-        {errors.content && <p style={{ color: "red" }}>{errors.content.message}</p>}
+          {errors.content && (
+            <p style={{ color: "red" }}>{errors.content.message}</p>
+          )}
 
           <div className="icons flex text-gray-500 m-2">
             <svg

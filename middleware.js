@@ -31,9 +31,9 @@ export function middleware(request) {
 
   if (isAdminRoute && token) {
     const decoded = decodeJWT(token);
-    const userRole = decoded?.role;
+    const userRole = decoded?.roles;
 
-    if (userRole !== "admin") {
+    if (!userRole?.includes("admin")) {
       return NextResponse.redirect(new URL("/NotAuthorized", request.url)); // o página de error
     }
   }

@@ -1,14 +1,14 @@
 "use client";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { useUserStore } from "@/stores/userStore";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function EditarPost({ post }) {
   const router = useRouter();
-  const user = useUserStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
 
   const {
     register,
@@ -24,7 +24,7 @@ export default function EditarPost({ post }) {
   const onSubmit = async (data) => {
     const body = {
       ...data,
-      user_id: user.id,
+      user_id: user.sub,
     };
     console.log(body);
 

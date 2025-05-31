@@ -15,8 +15,11 @@ import { usePathname } from "next/navigation";
 
 import LikeButton from "./LikeButton";
 import { useState } from "react";
-import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
-
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 export default function Card({
   title,
@@ -28,11 +31,55 @@ export default function Card({
 }) {
   const [likes, setLikes] = useState(numLikes);
   const pathname = usePathname();
+  const router = useRouter();
 
   const handleLikeToggle = (liked) => {
     console.log(likes);
     setLikes((prev) => prev + (liked ? 1 : -1));
     console.log(likes);
+  };
+
+  const handleDelete = () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const fetchData = async () => {
+          try {
+            const response = await axios.delete(
+              `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${Cookies.get("token")}`,
+                },
+              }
+            );
+            const data = response.data;
+            console.log(data);
+            Swal.fire({
+              title: "Eliminando...",
+              text: "Tu post ha sido eliminado.",
+              timer: 1500,
+              icon: "success",
+            });
+            router.push("/Posts/Mis-Posts");
+          } catch (error) {
+            console.error(
+              "Error en fetch:",
+              error.response?.status || error.message
+            );
+          }
+        };
+        fetchData();
+      }
+    });
   };
 
   return (
@@ -41,18 +88,22 @@ export default function Card({
       className="flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl p-6"
     >
       {pathname === "/Posts/Mis-Posts" && (
-            <div className="flex justify-end">
-        <DropdownMenu>
-          <DropdownMenuTrigger><EllipsisVerticalIcon className="h-6 w-6 text-gray-600" /></DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Opciones</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <Link href={`/Posts/${id}/Editar`}>
-            <DropdownMenuItem>Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <EllipsisVerticalIcon className="h-6 w-6 text-gray-600" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Opciones</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <Link href={`/Posts/${id}/Editar`}>
+                <DropdownMenuItem>Editar</DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem onClick={handleDelete}>
+                Eliminar
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       )}
 

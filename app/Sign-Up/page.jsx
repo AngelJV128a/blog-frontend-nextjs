@@ -76,6 +76,7 @@ export default function SignUpForm() {
                   placeholder="Tu nombre"
                   {...register("name", { required: "El nombre es obligatorio" })}
                 />
+                {errors.name && <span className="text-red-500 text-xs italic">{errors.name.message}</span>}
               </div>
 
               <div className="relative w-full mb-3">
@@ -93,6 +94,7 @@ export default function SignUpForm() {
                   placeholder="Correo electrónico"
                   {...register("email", { required: "El correo es obligatorio" })}
                 />
+                {errors.email && <span className="text-red-500 text-xs italic">{errors.email.message}</span>}
               </div>
 
               <div className="relative w-full mb-3">

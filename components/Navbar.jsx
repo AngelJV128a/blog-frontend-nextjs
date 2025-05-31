@@ -2,11 +2,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import DropdownPerfil from "@/components/DropdownPerfil";
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from "@/stores/authStore";
+
 export default function Navbar() {
   const pathname = usePathname();
-   const user = useAuthStore((state) => state.user); // ✅ define user
-
+  const user = useAuthStore((state) => state.user);
   return (
     <>
       <div className="flex flex-wrap place-items-center">
@@ -14,7 +14,7 @@ export default function Navbar() {
           <nav className="flex justify-between bg-gray-900 text-white w-screen">
             <div className="px-5 xl:px-12 py-6 flex w-full items-center">
               <a className="text-3xl font-bold font-heading" href="#">
-                Blog Angel {/* rol: {user?.roles} */}
+                Blog Angel
               </a>
 
               <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
