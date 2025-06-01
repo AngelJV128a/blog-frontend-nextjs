@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from "next/navigation";
 
-import LikeButton from "./LikeButton";
+import LikeButton from "./posts/LikeButton";
 import { useState } from "react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
@@ -69,7 +69,7 @@ export default function Card({
               timer: 1500,
               icon: "success",
             });
-            router.push("/Posts/Mis-Posts");
+            router.push("/posts/mis-posts");
           } catch (error) {
             console.error(
               "Error en fetch:",
@@ -87,7 +87,7 @@ export default function Card({
       key={id}
       className="flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl p-6"
     >
-      {pathname === "/Posts/Mis-Posts" && (
+      {pathname === "/posts/mis-posts" && (
         <div className="flex justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger>
@@ -96,7 +96,7 @@ export default function Card({
             <DropdownMenuContent>
               <DropdownMenuLabel>Opciones</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <Link href={`/Posts/${id}/Editar`}>
+              <Link href={`/posts/${id}/editar`}>
                 <DropdownMenuItem>Editar</DropdownMenuItem>
               </Link>
               <DropdownMenuItem onClick={handleDelete}>
@@ -112,7 +112,7 @@ export default function Card({
         Autor: {user}
       </p>
       <div className="flex items-center justify-between mt-auto">
-        <Link href={`/Posts/${id}`}>
+        <Link href={`/posts/${id}`}>
           <button
             className="mt-auto text-xs py-3 px-6 rounded-lg bg-gray-900 text-white shadow-md hover:shadow-lg transition"
             type="button"

@@ -24,7 +24,7 @@ export default function UserDropdown() {
   const handleLogout = () => {
     /*     Cookies.remove('token'); */
     logout();
-    router.push("/Login");
+    router.push("/login");
   };
 
   return (

@@ -68,7 +68,7 @@ export default function EditarPost({ post }) {
           icon: "success",
           confirmButtonText: "Ok, got it!",
         });
-        router.push("/Posts");
+        router.push("/posts");
       }
     });
   };

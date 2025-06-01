@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import DropdownPerfil from "@/components/DropdownPerfil";
+import DropdownPerfil from "@/components/auth/DropdownPerfil";
 import { useAuthStore } from "@/stores/authStore";
 
 export default function Navbar() {
@@ -21,11 +21,11 @@ export default function Navbar() {
                 <li>
                   <Link
                     className={`hover:text-gray-200 ${
-                      pathname === "/Posts"
+                      pathname === "/posts"
                         ? "text-white font-semibold border-b-2 border-white"
                         : "text-gray-400"
                     }`}
-                    href="/Posts"
+                    href="/posts"
                   >
                     Posts
                   </Link>
@@ -33,11 +33,11 @@ export default function Navbar() {
                 <li>
                   <Link
                     className={`hover:text-gray-200 ${
-                      pathname === "/Posts/Crear"
+                      pathname === "/posts/crear"
                         ? "text-white font-semibold border-b-2 border-white"
                         : "text-gray-400"
                     }`}
-                    href="/Posts/Crear"
+                    href="/posts/crear"
                   >
                     Crear Post
                   </Link>
@@ -45,11 +45,11 @@ export default function Navbar() {
                 <li>
                   <Link
                     className={`hover:text-gray-200 ${
-                      pathname === "/Posts/Mis-Posts"
+                      pathname === "/posts/mis-posts"
                         ? "text-white font-semibold border-b-2 border-white"
                         : "text-gray-400"
                     }`}
-                    href="/Posts/Mis-Posts"
+                    href="/posts/mis-posts"
                   >
                     Mis Posts
                   </Link>
@@ -57,9 +57,9 @@ export default function Navbar() {
                 {user?.roles?.includes("admin") && (
                   <li>
                     <Link
-                      href="/Posts/Admin"
+                      href="/posts/admin"
                       className={`hover:text-gray-200 ${
-                        pathname === "/Posts/Admin"
+                        pathname === "/posts/admin"
                           ? "text-white font-semibold border-b-2 border-white"
                           : "text-gray-400"
                       }`}
@@ -71,7 +71,7 @@ export default function Navbar() {
               </ul>
 
               <div className="hidden xl:flex items-center space-x-5 items-center">
-                <Link className="hover:text-gray-200" href="/Posts/Mis-Likes">
+                <Link className="hover:text-gray-200" href="/posts/mis-likes">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6"

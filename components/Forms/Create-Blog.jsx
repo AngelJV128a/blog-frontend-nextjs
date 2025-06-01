@@ -44,7 +44,7 @@ export default function CreateBlog() {
           icon: "success",
         });
 
-        router.push("/Posts");
+        router.push("/posts");
       } catch (error) {
         console.error("Error creating post:", error);
       }
