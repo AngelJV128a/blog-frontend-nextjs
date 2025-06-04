@@ -1,5 +1,5 @@
 "use client";
-import PostCard from "@/components/PostCard";
+import PostCard from "@/components/posts/PostCard";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-const protectedRoutes = ["/Posts", "/Users", "/Settings"];
-const adminOnlyRoutes = ["/Users", "/Settings", "/Posts/Admin"];
+const protectedRoutes = ["/posts", "/Users", "/Settings"];
+const adminOnlyRoutes = ["/Users", "/Settings", "/posts/admin"];
 
 function decodeJWT(token) {
   try {
@@ -26,7 +26,7 @@ export function middleware(request) {
   );
 
   if (isProtected && !token) {
-    return NextResponse.redirect(new URL("/Login", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (isAdminRoute && token) {
@@ -34,7 +34,7 @@ export function middleware(request) {
     const userRole = decoded?.roles;
 
     if (!userRole?.includes("admin")) {
-      return NextResponse.redirect(new URL("/NotAuthorized", request.url)); // o página de error
+      return NextResponse.redirect(new URL("/not-authorized", request.url)); // o página de error
     }
   }
 
@@ -42,5 +42,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/Posts/:path*", "/Users/:path*", "/Settings/:path*"],
+  matcher: ["/posts/:path*", "/Users/:path*", "/Settings/:path*"],
 };

@@ -37,7 +37,7 @@ export default function SignUpForm() {
             timer: 1500,
             icon: 'success',
           });
-          router.push('/Login');
+          router.push('/login');
 
       }catch(error){
         console.error("Error en fetch:",error.response?.status || error.message);

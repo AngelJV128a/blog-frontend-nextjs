@@ -41,7 +41,7 @@ export default function Login() {
 
         Cookies.set("token", data.access_token, { expires: 1 / 24 }); // 1 hora
         setUserFromToken();
-        router.push("/Posts");
+        router.push("/posts");
       } catch (error) {
         /*         console.error(
           "Error en fetch:",
@@ -144,7 +144,7 @@ export default function Login() {
                     {" "}
                     Sign In{" "}
                   </button>
-                  <Link href="/Sign-Up">
+                  <Link href="/sign-up">
                     <button
                       className="bg-yellow-800 text-white active:bg-yellow-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150 mt-3"
                       type="button"
